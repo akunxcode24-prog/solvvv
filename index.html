@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLV — Bantuan Serba Bisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --o: #FF5C1A;
+            --o2: #FF9500;
+            --o3: #FFD000;
+            --bg: #080808;
+            --bg2: #0f0f0f;
+            --bg3: #141414;
+            --line: rgba(255, 255, 255, 0.06);
+            --txt: #f4f4f4;
+            --muted: #555;
+            --soft: #888;
+            --card: #111111;
+            --radius: 16px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background: var(--bg);
+            color: var(--txt);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.35;
+        }
+
+        #prog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--o), var(--o2), var(--o3));
+            z-index: 500;
+            width: 0%;
+            transition: width 0.08s linear;
+            box-shadow: 0 0 10px var(--o);
+            border-radius: 0 2px 2px 0;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 400;
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8, 8, 8, 0.88);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--line);
+        }
+        .nav-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 5px;
+            color: #fff;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-brand .v {
+            color: var(--o);
+        }
+        .nav-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--o), var(--o2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-brand:hover::after {
+            transform: scaleX(1);
+        }
+        .nav-links {
+            display: flex;
+            gap: 0;
+            list-style: none;
+        }
+        .nav-link {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 8px 18px;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 18px;
+            right: 18px;
+            height: 1px;
+            background: var(--o);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--txt);
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            transform: scaleX(1);
+        }
+        .nav-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--o);
+            letter-spacing: 1px;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 100px 48px 60px;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 50% 60% at 20% 50%, rgba(255, 92, 26, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 50% at 80% 30%, rgba(255, 149, 0, 0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255, 92, 26, 0.05) 0%, transparent 60%);
+            animation: bgShift 10s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: orbFloat 8s ease-in-out infinite alternate;
+        }
+        .orb-1 {
+            width: 320px;
+            height: 320px;
+            background: rgba(255, 92, 26, 0.12);
+            top: 10%;
+            left: -5%;
+            animation-duration: 9s;
+        }
+        .orb-2 {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 149, 0, 0.08);
+            top: 60%;
+            right: 5%;
+            animation-duration: 11s;
+            animation-delay: 2s;
+        }
+        .orb-3 {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 208, 0, 0.06);
+            bottom: 20%;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 1s;
+        }
+        @keyframes orbFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(20px, -30px) scale(1.1);
+            }
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: slideInLeft 0.8s 0.2s forwards;
+            opacity: 0;
+        }
+        .hero-eyebrow-line {
+            width: 40px;
+            height: 1px;
+            background: var(--o);
+        }
+        .hero-eyebrow-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--o);
+        }
+        .hero-eyebrow-badge {
+            padding: 3px 10px;
+            background: rgba(255, 92, 26, 0.1);
+            border: 1px solid rgba(255, 92, 26, 0.25);
+            border-radius: 3px;
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--o);
+        }
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(64px, 10vw, 140px);
+            line-height: 0.9;
+            letter-spacing: -2px;
+            color: #fff;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .hero-title-row {
+            display: block;
+            overflow: hidden;
+            opacity: 0;
+            animation: slideUp 0.9s forwards;
+        }
+        .hero-title-row:nth-child(1) {
+            animation-delay: 0.35s;
+        }
+        .hero-title-row:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        .hero-title .grd {
+            background: linear-gradient(135deg, var(--o), var(--o2), var(--o3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-sub {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--soft);
+            line-height: 1.8;
+            margin-top: 16px;
+            margin-bottom: 32px;
+            max-width: 500px;
+            opacity: 0;
+            animation: slideInLeft 0.8s 0.7s forwards;
+        }
+        .hero-sub strong {
+            color: #bbb;
+            font-weight: 500;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            opacity: 0;
+            animation: fadeUp 0.7s 0.9s forwards;
+        }
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--o), var(--o2));
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-main:hover::before {
+            transform: translateX(0);
+        }
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(255, 92, 26, .4);
+            filter: brightness(1.1);
+        }
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--soft);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-ghost:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, .2);
+            background: rgba(255, 255, 255, .04);
+        }
+        .btn-arrow {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+        .btn-main:hover .btn-arrow,
+        .btn-ghost:hover .btn-arrow {
+            transform: translateX(4px);
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            padding: 80px 48px;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .section+.section {
+            border-top: 1px solid var(--line);
+        }
+        .sec-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--o);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .sec-tag::before {
+            content: '';
+            width: 28px;
+            height: 1px;
+            background: var(--o);
+        }
+        .sec-h {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(38px, 5vw, 60px);
+            letter-spacing: -1px;
+            line-height: 0.95;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .sec-h .acc {
+            color: var(--o);
+        }
+        .sec-body {
+            font-size: 15px;
+            line-height: 1.9;
+            color: var(--soft);
+            font-weight: 300;
+            max-width: 650px;
+            margin-bottom: 40px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.vis {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .marquee-wrap {
+            overflow: hidden;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            padding: 16px 0;
+            background: var(--bg2);
+            position: relative;
+            z-index: 2;
+        }
+        .marquee-track {
+            display: flex;
+            animation: marquee 22s linear infinite;
+            width: max-content;
+        }
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 32px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+        .marquee-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--o);
+            border-radius: 50%;
+        }
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .desc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 40px;
+        }
+        .desc-card {
+            background: var(--card);
+            padding: 36px 30px;
+            transition: background 0.3s;
+            position: relative;
+        }
+        .desc-card:hover {
+            background: var(--bg3);
+        }
+        .desc-icon {
+            font-size: 32px;
+            margin-bottom: 14px;
+        }
+        .desc-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .desc-text {
+            font-size: 13px;
+            color: var(--soft);
+            line-height: 1.7;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            margin-top: 40px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .tl-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 22px 28px;
+            background: var(--card);
+            border-bottom: 1px solid var(--line);
+            transition: background 0.3s, padding-left 0.3s;
+            cursor: default;
+        }
+        .tl-item:last-child {
+            border-bottom: none;
+        }
+        .tl-item:hover {
+            background: var(--bg3);
+            padding-left: 36px;
+        }
+        .tl-step {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 92, 26, 0.12);
+            border: 2px solid rgba(255, 92, 26, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            color: var(--o);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .tl-item:hover .tl-step {
+            background: var(--o);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 92, 26, 0.4);
+        }
+        .tl-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ddd;
+            margin-bottom: 4px;
+        }
+        .tl-content p {
+            font-size: 12px;
+            color: var(--soft);
+            line-height: 1.6;
+        }
+        .tl-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-left: auto;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 40px;
+        }
+        .price-card {
+            background: var(--card);
+            padding: 28px 26px;
+            transition: background 0.3s;
+            position: relative;
+        }
+        .price-card:hover {
+            background: var(--bg3);
+        }
+        .price-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--o), var(--o2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .price-card:hover::before {
+            transform: scaleX(1);
+        }
+        .price-cat {
+            font-family: 'Space Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--o);
+            margin-bottom: 6px;
+        }
+        .price-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ddd;
+            margin-bottom: 4px;
+        }
+        .price-desc {
+            font-size: 11px;
+            color: var(--soft);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .price-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        .price-summary {
+            margin-top: 32px;
+            background: var(--bg2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price-summary-item {
+            text-align: center;
+        }
+        .price-summary-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        .price-summary-val {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            color: var(--o);
+            letter-spacing: 1px;
+        }
+
+        /* Gambar container */
+        .section-image {
+            margin-top: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: var(--card);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 200px;
+        }
+        .section-image:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(255, 92, 26, 0.2);
+            border-color: rgba(255, 92, 26, 0.4);
+        }
+        .section-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            max-height: 500px;
+        }
+        .section-image .img-fallback {
+            display: none;
+            position: absolute;
+            inset: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            text-align: center;
+            padding: 20px;
+        }
+        .section-image .img-fallback .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        .section-image .img-fallback .text {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* LIGHTBOX */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 95vw;
+            max-height: 95vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 60px rgba(255, 92, 26, 0.3);
+            cursor: default;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10001;
+            transition: color 0.3s;
+        }
+        .lightbox-close:hover {
+            color: var(--o);
+        }
+
+        .cta-section {
+            padding: 100px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid var(--line);
+        }
+        .cta-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 40% 50% at 50% 50%, rgba(255, 92, 26, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: orbFloat 8s ease-in-out infinite alternate;
+        }
+        .cta-orb-1 {
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 92, 26, 0.1);
+            top: -50px;
+            left: -50px;
+        }
+        .cta-orb-2 {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 149, 0, 0.07);
+            bottom: -40px;
+            right: -40px;
+            animation-duration: 10s;
+        }
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .cta-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(40px, 8vw, 80px);
+            letter-spacing: -1px;
+            line-height: 1;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .cta-title .hl {
+            background: linear-gradient(135deg, var(--o), var(--o2), var(--o3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cta-sub {
+            font-size: 16px;
+            color: var(--soft);
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+        .cta-handle {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: var(--o);
+            margin-bottom: 28px;
+            padding: 8px 20px;
+            background: rgba(255, 92, 26, 0.08);
+            border: 1px solid rgba(255, 92, 26, 0.2);
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .btn-telegram {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--o), var(--o2));
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(255, 92, 26, 0.3);
+            position: relative;
+            overflow: hidden;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .btn-telegram::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-telegram:hover::before {
+            transform: translateX(0);
+        }
+        .btn-telegram:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(255, 92, 26, 0.5);
+            filter: brightness(1.1);
+        }
+        .telegram-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 28px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg);
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .ft-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 4px;
+            color: #333;
+        }
+        .ft-brand span {
+            color: var(--o);
+        }
+        .ft-copy {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hero {
+                padding: 100px 20px 40px;
+            }
+            .hero-title {
+                font-size: 48px;
+            }
+            .section {
+                padding: 48px 20px;
+            }
+            .cta-section {
+                padding: 60px 20px;
+            }
+            .desc-grid {
+                grid-template-columns: 1fr;
+            }
+            .price-grid {
+                grid-template-columns: 1fr;
+            }
+            .tl-item {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+            .tl-time {
+                display: none;
+            }
+            .price-summary {
+                flex-direction: column;
+                gap: 12px;
+            }
+            footer {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .btn-telegram {
+                padding: 16px 32px;
+                font-size: 14px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="prog"></div>
+    <nav>
+        <div class="nav-brand">SOL<span class="v">V</span></div>
+        <ul class="nav-links">
+            <li><a href="#deskripsi" class="nav-link active">Deskripsi</a></li>
+            <li><a href="#alur" class="nav-link">Alur</a></li>
+            <li><a href="#harga" class="nav-link">Harga</a></li>
+            <li><a href="#hubungi" class="nav-link">Hubungi</a></li>
+        </ul>
+        <div class="nav-num">@BANTUANSERBABISA_BOT</div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <div class="hero-eyebrow-line"></div>
+                <span class="hero-eyebrow-text">Layanan Jasa Harian</span>
+                <span class="hero-eyebrow-badge">24/7</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="hero-title-row">BANTUAN</span>
+                <span class="hero-title-row"><span class="grd">SERBA BISA</span></span>
+            </h1>
+            <p class="hero-sub">
+                <strong>SOLV</strong> — layanan bantuan harian berbasis <strong>Bot Telegram</strong> untuk mahasiswa dan pekerja. Cukup chat, langsung diproses. Harga jelas sejak awal, mitra terverifikasi, aman & terpercaya.
+            </p>
+            <div class="hero-actions">
+                <a href="#alur" class="btn-main">Lihat Alur Pemesanan <span class="btn-arrow">→</span></a>
+                <a href="#harga" class="btn-ghost">Daftar Harga <span class="btn-arrow">↓</span></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee-wrap">
+        <div class="marquee-track">
+            <span class="marquee-item"><span class="marquee-dot"></span> Cepat & Tanggap</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Harga Transparan</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Mitra Terverifikasi</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Aktif 24/7</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Via Bot Telegram</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Tanpa Aplikasi</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Cepat & Tanggap</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Harga Transparan</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Mitra Terverifikasi</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Aktif 24/7</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Via Bot Telegram</span>
+            <span class="marquee-item"><span class="marquee-dot"></span> Tanpa Aplikasi</span>
+        </div>
+    </div>
+
+    <section class="section" id="deskripsi">
+        <div class="sec-tag reveal">Tentang SOLV</div>
+        <h2 class="sec-h reveal">Deskripsi <span class="acc">Singkat</span></h2>
+        <p class="sec-body reveal">
+            <strong>SOLV</strong> adalah layanan jasa bantuan harian berbasis <strong>Bot Telegram</strong> yang dirancang khusus untuk mahasiswa dan pekerja yang tinggal mandiri di kos, pondok, atau kontrakan. SOLV hadir sebagai solusi cepat, mudah, dan terpercaya untuk menyelesaikan berbagai masalah harian — tanpa perlu repot mencari bantuan sendiri.
+        </p>
+        <div class="desc-grid reveal">
+            <div class="desc-card">
+                <div class="desc-icon">⚡</div>
+                <div class="desc-title">Cukup Chat, Langsung Diproses</div>
+                <div class="desc-text">Pesan layanan via Bot Telegram tanpa perlu download aplikasi baru. Cukup kirim detail kebutuhan, admin kami langsung proses.</div>
+            </div>
+            <div class="desc-card">
+                <div class="desc-icon">💰</div>
+                <div class="desc-title">Harga Jelas Sejak Awal</div>
+                <div class="desc-text">Estimasi biaya transparan sebelum eksekusi. Tanpa biaya tersembunyi. 88% pengguna menginginkan kejelasan harga — SOLV jawabannya.</div>
+            </div>
+            <div class="desc-card">
+                <div class="desc-icon">🛡️</div>
+                <div class="desc-title">Aman & Terpercaya</div>
+                <div class="desc-text">Mitra lokal terverifikasi dengan rating & ulasan. Pengguna tahu siapa yang datang — rasa aman terjamin.</div>
+            </div>
+            <div class="desc-card">
+                <div class="desc-icon">🕐</div>
+                <div class="desc-title">Aktif 24/7</div>
+                <div class="desc-text">Layanan siap diakses kapan saja, termasuk saat darurat malam hari. Masalah tidak perlu ditunda sampai esok.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="alur">
+        <div class="sec-tag reveal">Proses Layanan</div>
+        <h2 class="sec-h reveal">Alur <span class="acc">Pemesanan</span></h2>
+        <p class="sec-body reveal">
+            Dari chat pertama hingga rating akhir — seluruh proses dirancang sederhana dan transparan. Berikut 11 langkah alur pemesanan SOLV:
+        </p>
+        <div class="timeline reveal">
+            <div class="tl-item"><div class="tl-step">1</div><div class="tl-content"><h4>User Mulai Chat</h4><p>Halo! Selamat datang di SOLV – Bantuan Serba Bisa! Pilih layanan yang kamu butuhkan.</p></div><span class="tl-time">10.00</span></div>
+            <div class="tl-item"><div class="tl-step">2</div><div class="tl-content"><h4>User Pilih Layanan</h4><p>Pilih kategori: Titip Belanja, Perbaikan Elektronik, Angkat Barang, Kebersihan, atau Perbaikan Fisik.</p></div><span class="tl-time">10.01</span></div>
+            <div class="tl-item"><div class="tl-step">3</div><div class="tl-content"><h4>User Kirim Detail</h4><p>Kirim detail barang/lokasi/waktu. Contoh: "Indomie 2, air mineral, Kos Melati Blok A, sekarang."</p></div><span class="tl-time">10.03</span></div>
+            <div class="tl-item"><div class="tl-step">4</div><div class="tl-content"><h4>Bot Kirim Estimasi Biaya</h4><p>Estimasi jasa: Rp10.000–Rp15.000. Harga barang sesuai struk. Perkiraan total ±Rp25.000–Rp30.000.</p></div><span class="tl-time">10.03</span></div>
+            <div class="tl-item"><div class="tl-step">5</div><div class="tl-content"><h4>User Konfirmasi</h4><p>Pesanan diterima. Admin akan memproses. Mohon tunggu sebentar.</p></div><span class="tl-time">10.04</span></div>
+            <div class="tl-item"><div class="tl-step">6</div><div class="tl-content"><h4>Admin Proses Pesanan</h4><p>Admin menyapa dan mencari mitra terdekat yang tersedia.</p></div><span class="tl-time">10.05</span></div>
+            <div class="tl-item"><div class="tl-step">7</div><div class="tl-content"><h4>Mitra Ditemukan</h4><p>Nama mitra & rating ditampilkan. Estimasi tiba ±15 menit. Mitra akan menghubungi user.</p></div><span class="tl-time">10.06</span></div>
+            <div class="tl-item"><div class="tl-step">8</div><div class="tl-content"><h4>Mitra Menghubungi User</h4><p>Mitra memperkenalkan diri dan siap membantu pesanan.</p></div><span class="tl-time">10.07</span></div>
+            <div class="tl-item"><div class="tl-step">9</div><div class="tl-content"><h4>Proses Layanan</h4><p>Update status real-time: "Saya sudah di jalan", "Sudah sampai lokasi", "Pesanan selesai".</p></div><span class="tl-time">10.20</span></div>
+            <div class="tl-item"><div class="tl-step">10</div><div class="tl-content"><h4>Pembayaran</h4><p>Biaya jasa + harga barang (sesuai struk). Total transparan, tanpa biaya tersembunyi.</p></div><span class="tl-time">10.21</span></div>
+            <div class="tl-item"><div class="tl-step">11</div><div class="tl-content"><h4>Rating & Ulasan</h4><p>Beri penilaian 1–5 bintang dan komentar. Bantu tingkatkan kualitas layanan SOLV.</p></div><span class="tl-time">10.22</span></div>
+        </div>
+        <!-- GAMBAR ALUR PEMESANAN VIA IMGBB -->
+        <div class="section-image reveal">
+            <img src="https://i.ibb.co/dszr60MG/IMG-20260508-WA0005.jpg" alt="Alur Pemesanan SOLV" class="clickable-image" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <div class="img-fallback">
+                <div class="icon">🖼️</div>
+                <div class="text">Gambar "Alur Pemesanan" gagal dimuat.<br>Pastikan link ImgBB masih aktif.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="harga">
+        <div class="sec-tag reveal">Katalog Layanan</div>
+        <h2 class="sec-h reveal">Daftar <span class="acc">Harga</span></h2>
+        <p class="sec-body reveal">
+            Harga jasa SOLV yang transparan. Semua harga di bawah <strong>belum termasuk</strong> harga barang yang dibeli (jika titip belanja). Pengguna wajib transfer uang belanja terlebih dahulu.
+        </p>
+        <div class="price-grid reveal">
+            <div class="price-card"><div class="price-cat">🛒 Titip Belanja / Jasa Antar</div><div class="price-name">Titip Beli Makanan/Minuman</div><div class="price-desc">Beli di warung/kantin sekitar area kos, maks. 1 tempat</div><div class="price-amount">Rp5.000</div></div>
+            <div class="price-card"><div class="price-cat">🛒 Titip Belanja / Jasa Antar</div><div class="price-name">Titip Beli Kebutuhan Harian</div><div class="price-desc">Sabun, sampo, pasta gigi, dll. di minimarket terdekat</div><div class="price-amount">Rp7.000</div></div>
+            <div class="price-card"><div class="price-cat">🛒 Titip Belanja / Jasa Antar</div><div class="price-name">Antar Barang Ringan</div><div class="price-desc">Antar dokumen, paket kecil, atau barang 5–9 kg antar kos</div><div class="price-amount">Rp8.000</div></div>
+            <div class="price-card"><div class="price-cat">🛒 Titip Belanja / Jasa Antar</div><div class="price-name">Titip Beli + Antar Jauh</div><div class="price-desc">Belanja di tempat &lt;2 km dari lokasi pengguna</div><div class="price-amount">Rp12.000</div></div>
+            <div class="price-card"><div class="price-cat">🛒 Titip Belanja / Jasa Antar</div><div class="price-name">Titip Beli Banyak Item</div><div class="price-desc">Belanja 5–10 item di 1 tempat</div><div class="price-amount">Rp15.000</div></div>
+            <div class="price-card"><div class="price-cat">🔧 Perbaikan Elektronik Ringan</div><div class="price-name">Ganti Lampu / Modul</div><div class="price-desc">Termasuk jasa pasang (lampu beli baru)</div><div class="price-amount">Rp10.000</div></div>
+            <div class="price-card"><div class="price-cat">🔧 Perbaikan Elektronik Ringan</div><div class="price-name">Perbaikan Kabel / Steker</div><div class="price-desc">Perbaikan rol kabel atau ganti sekering</div><div class="price-amount">Rp20.000</div></div>
+            <div class="price-card"><div class="price-cat">🔧 Perbaikan Elektronik Ringan</div><div class="price-name">Stop Kontak Longgar</div><div class="price-desc">Perbaikan ringan stop kontak longgar</div><div class="price-amount">Rp20.000</div></div>
+            <div class="price-card"><div class="price-cat">📦 Angkat / Pindah Barang</div><div class="price-name">Angkat Barang Ringan</div><div class="price-desc">Barang &lt;20 kg dalam gedung yang sama</div><div class="price-amount">Rp15.000</div></div>
+            <div class="price-card"><div class="price-cat">📦 Angkat / Pindah Barang</div><div class="price-name">Angkat Barang Berat</div><div class="price-desc">Barang &gt;20 kg dalam gedung yang sama</div><div class="price-amount">Rp25.000</div></div>
+            <div class="price-card"><div class="price-cat">📦 Angkat / Pindah Barang</div><div class="price-name">Pindahan Kos Jarak Dekat</div><div class="price-desc">Pindahan kos jarak &lt;1 km</div><div class="price-amount">Rp40.000</div></div>
+            <div class="price-card"><div class="price-cat">🧹 Jasa Kebersihan</div><div class="price-name">Bersihkan Kamar Kecil</div><div class="price-desc">Sapu, pel, lap debu, rapikan tempat tidur (&lt;3×3 m)</div><div class="price-amount">Rp20.000</div></div>
+            <div class="price-card"><div class="price-cat">🧹 Jasa Kebersihan</div><div class="price-name">Bersihkan Kamar Mandi</div><div class="price-desc">Sikat lantai, bersihkan kloset, wastafel, dan dinding</div><div class="price-amount">Rp25.000</div></div>
+            <div class="price-card"><div class="price-cat">🧹 Jasa Kebersihan</div><div class="price-name">Paket Lengkap Kamar + KM</div><div class="price-desc">Paket lengkap kamar dan kamar mandi ukuran standar</div><div class="price-amount">Rp45.000</div></div>
+            <div class="price-card"><div class="price-cat">🔨 Perbaikan Fisik Ringan</div><div class="price-name">Pasang / Gantung Gambar</div><div class="price-desc">Pasang gantungan gambar, jam, atau hiasan dinding</div><div class="price-amount">Rp10.000</div></div>
+            <div class="price-card"><div class="price-cat">🔨 Perbaikan Fisik Ringan</div><div class="price-name">Tambal Kebocoran Ringan</div><div class="price-desc">Tambal tetesan air di pipa atau sambungan kecil</div><div class="price-amount">Rp30.000</div></div>
+            <div class="price-card"><div class="price-cat">🔨 Perbaikan Fisik Ringan</div><div class="price-name">Perbaikan Kunci Pintu</div><div class="price-desc">Perbaikan kunci pintu ringan</div><div class="price-amount">Rp25.000</div></div>
+        </div>
+        <div class="price-summary reveal">
+            <div class="price-summary-item"><div class="price-summary-label">Kategori</div><div class="price-summary-val">5</div></div>
+            <div class="price-summary-item"><div class="price-summary-label">Harga Terendah</div><div class="price-summary-val">Rp5.000</div></div>
+            <div class="price-summary-item"><div class="price-summary-label">Harga Tertinggi</div><div class="price-summary-val">Rp60.000</div></div>
+            <div class="price-summary-item"><div class="price-summary-label">Rata-rata Harga</div><div class="price-summary-val">±Rp22.000</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center;" class="reveal">
+            ⚠️ <strong>Catatan:</strong> Harga di atas <em>belum termasuk</em> harga barang yang dibeli (titip belanja). Alat kebersihan & material disediakan pengguna. Untuk pindahan jarak jauh, biaya transportasi ditanggung pengguna.
+        </p>
+        <!-- GAMBAR DAFTAR HARGA VIA IMGBB -->
+        <div class="section-image reveal">
+            <img src="https://i.ibb.co/xtQ3W7FC/IMG-20260508-WA0004.jpg" alt="Daftar Harga SOLV" class="clickable-image" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <div class="img-fallback">
+                <div class="icon">🖼️</div>
+                <div class="text">Gambar "Daftar Harga" gagal dimuat.<br>Pastikan link ImgBB masih aktif.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="hubungi">
+        <div class="cta-bg"></div>
+        <div class="cta-orb cta-orb-1"></div>
+        <div class="cta-orb cta-orb-2"></div>
+        <div class="cta-content reveal">
+            <div class="sec-tag" style="justify-content:center;">Hubungi Kami</div>
+            <h2 class="cta-title">BUTUH <span class="hl">BANTUAN</span> SEKARANG?</h2>
+            <p class="cta-sub">Tim SOLV siap membantu 24/7 via Telegram. Cepat, aman, dan harga transparan!</p>
+            <!-- GAMBAR POSTER UTAMA VIA IMGBB -->
+            <div class="section-image" style="margin-bottom: 28px;">
+                <img src="https://i.ibb.co/wFkzS5rt/IMG-20260508-WA0001.jpg" alt="SOLV Poster Utama" class="clickable-image" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="img-fallback">
+                    <div class="icon">🖼️</div>
+                    <div class="text">Gambar "Poster Utama" gagal dimuat.<br>Pastikan link ImgBB masih aktif.</div>
+                </div>
+            </div>
+            <div class="cta-handle">@BANTUANSERBABISA_BOT</div>
+            <br>
+            <a href="https://t.me/BANTUANSERBABISA_BOT" target="_blank" class="btn-telegram">
+                <svg class="telegram-icon" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.06-.06-.15-.04-.22-.02-.09.02-1.57.99-4.42 2.92-.42.29-.8.43-1.14.42-.38-.01-1.1-.21-1.64-.39-.66-.21-1.18-.33-1.14-.69.02-.19.29-.38.79-.58 3.08-1.34 5.14-2.23 6.18-2.66 2.94-1.22 3.55-1.43 3.95-1.44.09 0 .28.02.41.12.11.08.14.19.15.27-.01.04.01.16 0 .23z"/>
+                </svg>
+                ⚡ Buka Telegram Sekarang
+            </a>
+            <p style="font-size:11px;color:var(--muted);margin-top:16px;">Klik tombol di atas untuk langsung terhubung dengan Bot Telegram SOLV</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="ft-brand">SOL<span>V</span></div>
+        <div class="ft-copy">© 2025/2026 — Kelompok 2, Tadris IPA UIN Syekh Wasli Kediri</div>
+        <div class="ft-copy">@BANTUANSERBABISA_BOT</div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img src="" alt="lightbox image">
+    </div>
+
+    <script>
+        const progBar = document.getElementById('prog');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (scrollTop / docHeight) * 100;
+            progBar.style.width = scrolled + '%';
+        });
+
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('vis');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // LIGHTBOX FUNCTIONALITY
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxClose = lightbox.querySelector('.lightbox-close');
+        const clickableImages = document.querySelectorAll('.clickable-image');
+
+        clickableImages.forEach(img => {
+            img.addEventListener('click', function(e) {
+                e.stopPropagation();
+                lightbox.classList.add('active');
+                lightboxImg.src = this.src;
+                lightboxImg.alt = this.alt;
+            });
+        });
+
+        lightboxClose.addEventListener('click', function() {
+            lightbox.classList.remove('active');
+        });
+
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                lightbox.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
